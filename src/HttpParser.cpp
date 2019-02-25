@@ -7,16 +7,22 @@ namespace heyhttp
 
 bool HttpParser::parse(const string& httpString, bool isDebug)
 {
-    size_t pos = httpString.find("\n\n");
-    if(pos != string::npos)
+    bool ret = true;
+    size_t pos1 = httpString.find('\n');
+    ret = ret && this->parseFirstLine(httpString.substr(0, pos1));
+
+    size_t pos2 = httpString.find("\n\n");
+    if(pos2 != string::npos)
     {
-        this->parseHeader(httpString.substr(0, pos+2), isDebug);
-        this->parseBody(httpString.substr(pos+2), isDebug);
+        ret = ret && this->parseHeader(httpString.substr(pos1+1, pos2-pos1), isDebug);
+        ret = ret && this->parseBody(httpString.substr(pos2+2), isDebug);
     }
     else
     {
-        this->parseHeader(httpString, isDebug);
+        ret = ret && this->parseHeader(httpString, isDebug);
     }
+
+    return ret;
 }
 
 /* Parse HTTP header */
@@ -25,19 +31,6 @@ bool HttpParser::parseHeader(const string& httpString, bool isDebug)
     string line;
     size_t pos = 0;
     size_t count = 0;
-
-    /* Parse the first line */
-    line = httpString.substr(pos, httpString.find('\n'));
-    count = line.find(' ');
-    this->_method = line.substr(0, count);
-    pos = line.rfind(' ');
-    this->_http_version = line.substr(pos + 1);
-    this->_url = line.substr(count + 1, pos - count - 1);
-
-    if(this->_http_version != "HTTP/1.1")
-    {
-        logError("Only support HTTP/1.1 (%s).\n", line.c_str());
-    }
     
     /* Parse the header */
     pos = httpString.find('\n');
@@ -62,7 +55,6 @@ bool HttpParser::parseHeader(const string& httpString, bool isDebug)
     /* DEBUG print */
     if(isDebug)
     {
-        std::cout << this->_method << " " << this->_url << " " << this->_http_version << std::endl;
         for(auto& pair : this->_header)
         {
             std::cout << std::get<0>(pair) << " : " << std::get<1>(pair) << std::endl;
@@ -82,6 +74,58 @@ bool HttpParser::parseBody(const string& httpString, bool isDebug)
     {
         std::cout << this->_body << std::endl;
     }
+
+    return true;
 }
 
+/* Get HTTP header */
+string HttpParser::getHeader(const string& key)
+{
+    return this->_header[key];
 }
+
+/* Get HTTP Body */
+string HttpParser::getBody()
+{
+    return this->_body;
+}
+
+/* Set HTTP header */
+void HttpParser::setHeader(const string& key, const string& value)
+{
+    this->_header[key] = value;
+}
+
+/* Set HTTP body */
+void HttpParser::setBody(const string& bodyData)
+{
+    this->_body = bodyData;
+}
+
+/* Dump to string */
+string HttpParser::dump()
+{
+    return this->dumpFirstLine() + this->dumpHeader() + "\n" + this->dumpBody();
+}
+
+/* Dump header to string */
+string HttpParser::dumpHeader()
+{
+    string ret = "";
+    for(auto& pair : this->_header)
+    {
+        ret += std::get<0>(pair);
+        ret += ": ";
+        ret += std::get<1>(pair);
+        ret += "\n";
+    }
+
+    return ret;
+}
+
+string HttpParser::dumpBody()
+{
+    return this->_body;
+}
+
+};

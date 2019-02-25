@@ -16,17 +16,23 @@ class HttpParser
 public:
     // HttpParser();
     // ~HttpParser();
-    bool parse(const string& httpRequest, bool isDebug=true);
-    bool parseHeader(const string& httpString, bool isDebug=true);
-    bool parseBody(const string& httpString, bool isDebug=true);
+    virtual bool parse(const string& httpRequest, bool isDebug=true);
+    virtual bool parseFirstLine(const string& httpString, bool isDebug=true)=0;
+    virtual bool parseHeader(const string& httpString, bool isDebug=true);
+    virtual bool parseBody(const string& httpString, bool isDebug=true);
 
-private:
-    string _method;
-    string _url;
-    string _http_version;
-    map< string, string > _header;
-    string _body;
+    virtual string getHeader(const string& key);
+    virtual string getBody();
 
+    virtual void setHeader(const string& key, const string& value);
+    virtual void setBody(const string& bodyData);
+
+    virtual string dump();
+    virtual string dumpFirstLine()=0;
+    virtual string dumpHeader();
+    virtual string dumpBody();
+
+protected:
     static void logError(const char* fmt, ...)
     {
         va_list args;
@@ -44,6 +50,10 @@ private:
         vfprintf(stdout, fmt, args);
         va_end(args);
     }
+
+private:
+    map< string, string > _header;
+    string _body;
 
 };
 
