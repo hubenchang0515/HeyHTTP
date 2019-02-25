@@ -10,17 +10,16 @@ using std::map;
 /* Parse the HTTP request first line */
 bool HttpRequest::parseFirstLine(const string& httpString, bool isDebug)
 {
-    string line = httpString;
-    size_t pos1 = line.find(' ');
-    size_t pos2 = line.rfind(' ');
-    this->_method = line.substr(0, pos1);
+    size_t pos1 = httpString.find(' ');
+    size_t pos2 = httpString.rfind(' ');
     
-    this->_version = line.substr(pos2 + 1);
-    this->_url = line.substr(pos1 + 1, pos2 - pos1 - 1);
+    this->_method = httpString.substr(0, pos1);
+    this->_version = httpString.substr(pos2 + 1);
+    this->_url = httpString.substr(pos1 + 1, pos2 - pos1 - 1);
 
     if(this->_version != "HTTP/1.1")
     {
-        logError("Only support HTTP/1.1 (%s).\n", line.c_str());
+        logError("Only support HTTP/1.1 (%s).\n", httpString.c_str());
     }
 
     if(isDebug)

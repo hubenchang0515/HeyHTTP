@@ -13,12 +13,20 @@ class HttpResponse : public HttpParser
 {
 public:
     virtual bool parseFirstLine(const string& httpRequest, bool isDebug=true);
+
+    virtual string getState();
+    virtual string getInfo();
+
+    virtual void setState(const string& state);
+    virtual void setInfo(const string& info);
+    //virtual void setVersion(const string& version);
+
     virtual string dumpFirstLine();
 
 private:
-    string _version;
-    string _state;
-    string _info;
+    string _version = "HTTP/1.1";
+    string _state = "200";
+    string _info = "OK";
 };
 
 };

@@ -24,8 +24,8 @@ public:
     virtual string dumpFirstLine();
 
 private:
-    string _method;
-    string _url;
+    string _method = "GET";
+    string _url = "/";
     string _version = "HTTP/1.1";
 };
 

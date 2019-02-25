@@ -1,4 +1,5 @@
 #include "HttpRequest.h"
+#include "HttpResponse.h"
 #include <iostream>
 
 using namespace heyhttp;
@@ -12,6 +13,9 @@ int main()
     request.setHeader("Host", "www.404.com");
     request.setBody("?name=bug&sex=unisex");
     std::cout << request.dump() << std::endl;
+
+    HttpResponse response;
+    std::cout << response.dump() << std::endl;
 
     return 0;
 }
