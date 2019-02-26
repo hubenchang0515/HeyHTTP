@@ -19,7 +19,7 @@ bool HttpRequest::parseFirstLine(const string& httpString, bool isDebug)
 
     if(this->_version != "HTTP/1.1")
     {
-        logError("Only support HTTP/1.1 (%s).\n", httpString.c_str());
+        logWarning("Only support HTTP/1.1 (%s).\n", httpString.c_str());
     }
 
     if(isDebug)
@@ -43,6 +43,12 @@ string HttpRequest::getUrl()
     return this->_url;
 }
 
+/* Get HTTP version */
+string HttpRequest::getVersion()
+{
+    return this->_version;
+}
+
 /* Set request method */
 void HttpRequest::setMethod(const string& method)
 {
@@ -53,6 +59,17 @@ void HttpRequest::setMethod(const string& method)
 void HttpRequest::setUrl(const string& url)
 {
     this->_url = url;
+}
+
+/* Set HTTP version */
+void HttpRequest::setVersion(const string& version)
+{
+    if(version != "HTTP/1.1")
+    {
+        logWarning("Only support HTTP/1.1 (%s).\n", version.c_str());
+    }
+
+    this->_version = version;
 }
 
 string HttpRequest::dumpFirstLine()

@@ -16,10 +16,11 @@ public:
 
     virtual string getMethod();
     virtual string getUrl();
+    virtual string getVersion();
 
     virtual void setMethod(const string& method);
     virtual void setUrl(const string& url);
-    //virtual void setVersion(const string& version);
+    virtual void setVersion(const string& version);
 
     virtual string dumpFirstLine();
 

@@ -19,7 +19,7 @@ bool HttpResponse::parseFirstLine(const string& httpString, bool isDebug)
 
     if(this->_version != "HTTP/1.1")
     {
-        logError("Only support HTTP/1.1 (%s).\n", httpString.c_str());
+        logWarning("Only support HTTP/1.1 (%s).\n", httpString.c_str());
     }
 
     if(isDebug)
@@ -33,6 +33,12 @@ bool HttpResponse::parseFirstLine(const string& httpString, bool isDebug)
     return true;
 }
 
+/* Get HTTP version */
+string HttpResponse::getVersion()
+{
+    return this->_version;
+}
+
 /* Get response state */
 string HttpResponse::getState()
 {
@@ -43,6 +49,17 @@ string HttpResponse::getState()
 string HttpResponse::getInfo()
 {
     return this->_info;
+}
+
+/* Set HTTP version */
+void HttpResponse::setVersion(const string& version)
+{
+    if(version != "HTTP/1.1")
+    {
+        logWarning("Only support HTTP/1.1 (%s).\n", version.c_str());
+    }
+
+    this->_version = version;
 }
 
 /* Set response state */
