@@ -33,34 +33,80 @@ bool HttpParser::parseHeader(const string& httpString)
     size_t count = 0;
     
     /* Parse the header */
-    pos = httpString.find('\n');
+    string tempString = httpString + "\n"; // simplify loop
+    pos = tempString.find('\n');
     while(pos != string::npos)
     {
         pos += 1;
-        count = httpString.find('\n', pos) - pos;
-        line = httpString.substr(pos, count);
-        if(line.find_first_not_of(" \t\r\n") == string::npos) break;
+        count = tempString.find('\n', pos) - pos;
+        line = tempString.substr(pos, count);
+        if(line.find_first_not_of(" \t\r\n") == string::npos)
+        {
+            pos = tempString.find('\n', pos);
+            continue;
+        }
         size_t pos_of_colon = line.find(':');
         if(pos_of_colon == string::npos)
         {
             logWarning("Malformed header line (%s).\n", line.c_str());
         }
-        string key = line.substr(0, pos_of_colon);
-        string value = line.substr(pos_of_colon + 1);
-        this->_header[key] = value;
-        pos = httpString.find('\n', pos);
+        else
+        {
+            string key = line.substr(0, pos_of_colon);
+            string value = line.substr(pos_of_colon + 1);
+            this->_header[key] = value;
+        }
+        pos = tempString.find('\n', pos);
     }
 
     return true;
 }
 
-
 /* Parse HTTP body */
 bool HttpParser::parseBody(const string& httpString)
 {
-    this->_body = httpString;
+    this->parseQueryString(httpString);
 
     return true;
+}
+
+/* Parse HTTP query string parameters */
+bool HttpParser::parseQueryString(const string& httpString)
+{
+    size_t pos = 0;
+    size_t count = 0;
+    // if(httpString[0] == '?')
+    // {
+    //     pos = 1;
+    // }
+
+    string param;
+    string tempString = httpString + "&"; // simplify loop
+    while(pos != string::npos)
+    {
+        pos += 1;
+        count = tempString.find('&', pos) - pos;
+        param = tempString.substr(pos, count);
+        if(param.find_first_not_of(" \t\r\n") == string::npos)
+        {
+            pos = param.find('&', pos);
+            continue;
+        }
+        size_t pos_of_equal = param.find('=');
+        if(pos_of_equal == string::npos)
+        {
+            logWarning("Malformed query string parameter (%s).\n", param.c_str());
+        }
+        else
+        {
+            string key = param.substr(0, pos_of_equal);
+            string value = param.substr(pos_of_equal+1);
+            this->_queryStringParameters[key] = value;
+        }
+        pos = tempString.find('&', pos);
+    }
+
+    return 0;
 }
 
 /* Get HTTP header */
@@ -75,6 +121,12 @@ string HttpParser::getBody()
     return this->_body;
 }
 
+/* Get HTTP query string parameter */
+string HttpParser::getQueryParameter(const string& key)
+{
+    return this->_queryStringParameters[key];
+}
+
 /* Set HTTP header */
 void HttpParser::setHeader(const string& key, const string& value)
 {
@@ -85,6 +137,12 @@ void HttpParser::setHeader(const string& key, const string& value)
 void HttpParser::setBody(const string& bodyData)
 {
     this->_body = bodyData;
+}
+
+/* Set HTTP query string parameter */
+void HttpParser::setQueryParameter(const string& key, const string& value)
+{
+    this->_queryStringParameters[key] = value;
 }
 
 /* Dump to string */
@@ -108,9 +166,25 @@ string HttpParser::dumpHeader()
     return ret;
 }
 
+/* Dump HTTP body */
 string HttpParser::dumpBody()
 {
-    return this->_body;
+    return this->dumpQueryString();
+}
+
+/* Dump HTTP query string */
+string HttpParser::dumpQueryString()
+{
+    string queryString = "?";
+    for(auto& pair : this->_queryStringParameters)
+    {
+        queryString += std::get<0>(pair);
+        queryString += "=";
+        queryString += std::get<1>(pair);
+        queryString += "&";
+    }
+    queryString.erase(queryString.length()-1);
+    return queryString;
 }
 
 };

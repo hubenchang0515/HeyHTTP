@@ -20,17 +20,21 @@ public:
     virtual bool parseFirstLine(const string& httpString)=0;
     virtual bool parseHeader(const string& httpString);
     virtual bool parseBody(const string& httpString);
+    virtual bool parseQueryString(const string& httpString);
 
     virtual string getHeader(const string& key);
     virtual string getBody();
+    virtual string getQueryParameter(const string& key);
 
     virtual void setHeader(const string& key, const string& value);
     virtual void setBody(const string& bodyData);
+    virtual void setQueryParameter(const string& key, const string& value);
 
     virtual string dump();
     virtual string dumpFirstLine()=0;
     virtual string dumpHeader();
     virtual string dumpBody();
+    virtual string dumpQueryString();
 
 protected:
     static void logError(const char* fmt, ...)
@@ -53,6 +57,7 @@ protected:
 
 private:
     map< string, string > _header;
+    map< string, string > _queryStringParameters;
     string _body;
 
 };
