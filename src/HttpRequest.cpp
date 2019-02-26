@@ -17,6 +17,13 @@ bool HttpRequest::parseFirstLine(const string& httpString)
     this->_version = httpString.substr(pos2 + 1);
     this->_url = httpString.substr(pos1 + 1, pos2 - pos1 - 1);
 
+    pos1 = this->_url.find('?');
+    if(pos1 != string::npos)
+    {
+        parseQueryString(this->_url.substr(pos1));
+        this->_url = this->_url.substr(0, pos1);
+    }
+
     if(this->_version != "HTTP/1.1")
     {
         logWarning("Only support HTTP/1.1 (%s).\n", httpString.c_str());
@@ -53,6 +60,13 @@ void HttpRequest::setMethod(const string& method)
 void HttpRequest::setUrl(const string& url)
 {
     this->_url = url;
+
+    size_t pos = this->_url.find('?');
+    if(pos != string::npos)
+    {
+        parseQueryString(this->_url.substr(pos));
+        this->_url = this->_url.substr(0, pos);
+    }
 }
 
 /* Set HTTP version */
