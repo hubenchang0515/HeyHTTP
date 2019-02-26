@@ -13,9 +13,9 @@ bool HttpRequest::parseFirstLine(const string& httpString)
     size_t pos1 = httpString.find(' ');
     size_t pos2 = httpString.rfind(' ');
     
-    this->_method = httpString.substr(0, pos1);
-    this->_version = httpString.substr(pos2 + 1);
-    this->_url = httpString.substr(pos1 + 1, pos2 - pos1 - 1);
+    this->_method = clearEnds(httpString.substr(0, pos1));
+    this->_version = clearEnds(httpString.substr(pos2 + 1));
+    this->_url = clearEnds(httpString.substr(pos1 + 1, pos2 - pos1 - 1));
 
     pos1 = this->_url.find('?');
     if(pos1 != string::npos)

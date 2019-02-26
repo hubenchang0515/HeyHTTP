@@ -7,9 +7,21 @@ namespace heyhttp
 
 bool HttpParser::parse(const string& httpString)
 {
+    if(httpString.length() == 0)
+    {
+        return false;
+    }
     bool ret = true;
     size_t pos1 = httpString.find('\n');
-    ret = ret && this->parseFirstLine(httpString.substr(0, pos1));
+    if(pos1 != string::npos)
+    {
+        ret = ret && this->parseFirstLine(httpString.substr(0, pos1));
+    }
+    else
+    {
+        ret = ret && this->parseFirstLine(httpString);
+    }
+    
 
     size_t pos2 = httpString.find("\n\n");
     if(pos2 != string::npos)
@@ -52,8 +64,8 @@ bool HttpParser::parseHeader(const string& httpString)
         }
         else
         {
-            string key = line.substr(0, pos_of_colon);
-            string value = line.substr(pos_of_colon + 1);
+            string key = clearEnds(line.substr(0, pos_of_colon));
+            string value = clearEnds(line.substr(pos_of_colon + 1));
             this->_header[key] = value;
         }
         pos = tempString.find('\n', pos);
@@ -65,7 +77,7 @@ bool HttpParser::parseHeader(const string& httpString)
 /* Parse HTTP body */
 bool HttpParser::parseBody(const string& httpString)
 {
-    this->parseQueryString(httpString);
+    this->_body = httpString;
 
     return true;
 }
@@ -99,8 +111,8 @@ bool HttpParser::parseQueryString(const string& httpString)
         }
         else
         {
-            string key = param.substr(0, pos_of_equal);
-            string value = param.substr(pos_of_equal+1);
+            string key = clearEnds(param.substr(0, pos_of_equal));
+            string value = clearEnds(param.substr(pos_of_equal+1));
             this->_queryStringParameters[key] = value;
         }
         pos = tempString.find('&', pos);
@@ -169,7 +181,7 @@ string HttpParser::dumpHeader()
 /* Dump HTTP body */
 string HttpParser::dumpBody()
 {
-    return this->dumpQueryString();
+    return this->_body;
 }
 
 /* Dump HTTP query string */

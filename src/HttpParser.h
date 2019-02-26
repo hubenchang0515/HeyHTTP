@@ -39,20 +39,27 @@ public:
 protected:
     static void logError(const char* fmt, ...)
     {
+        fprintf(stderr, "[ERROR] ");
         va_list args;
         va_start(args, fmt);
-        fprintf(stderr, "[ERROR] ");
         vfprintf(stderr, fmt, args);
         va_end(args);
     }
 
     static void logWarning(const char* fmt, ...)
     {
+        fprintf(stdout, "[WARNING] ");
         va_list args;
         va_start(args, fmt);
-        fprintf(stdout, "[WARNING] ");
         vfprintf(stdout, fmt, args);
         va_end(args);
+    }
+
+    static string clearEnds(const string& str)
+    {
+        size_t pos1 = str.find_first_not_of(" \r\t\n");
+        size_t pos2 = str.find_last_not_of(" \r\t\n");
+        return str.substr(pos1, pos2-pos1+1);
     }
 
 private:

@@ -13,9 +13,9 @@ bool HttpResponse::parseFirstLine(const string& httpString)
     size_t pos1 = httpString.find(' ');
     size_t pos2 = httpString.rfind(' ');
 
-    this->_version = httpString.substr(0, pos1);
-    this->_state = httpString.substr(pos1+1, pos2-pos1-1);
-    this->_info = httpString.substr(pos2+1);
+    this->_version = clearEnds(httpString.substr(0, pos1));
+    this->_state = clearEnds(httpString.substr(pos1+1, pos2-pos1-1));
+    this->_info = clearEnds(httpString.substr(pos2+1));
 
     if(this->_version != "HTTP/1.1")
     {

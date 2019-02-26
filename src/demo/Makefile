@@ -1,0 +1,2 @@
+demo : main.cpp ../HttpParser.cpp ../HttpParser.h ../HttpRequest.cpp ../HttpRequest.h ../HttpResponse.cpp ../HttpResponse.h
+	g++ -o demo -std=c++11 main.cpp ../HttpParser.cpp ../HttpRequest.cpp ../HttpResponse.cpp -lstdc++
