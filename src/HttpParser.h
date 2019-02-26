@@ -16,10 +16,10 @@ class HttpParser
 public:
     // HttpParser();
     // ~HttpParser();
-    virtual bool parse(const string& httpRequest, bool isDebug=true);
-    virtual bool parseFirstLine(const string& httpString, bool isDebug=true)=0;
-    virtual bool parseHeader(const string& httpString, bool isDebug=true);
-    virtual bool parseBody(const string& httpString, bool isDebug=true);
+    virtual bool parse(const string& httpRequest);
+    virtual bool parseFirstLine(const string& httpString)=0;
+    virtual bool parseHeader(const string& httpString);
+    virtual bool parseBody(const string& httpString);
 
     virtual string getHeader(const string& key);
     virtual string getBody();

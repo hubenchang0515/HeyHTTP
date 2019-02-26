@@ -5,7 +5,7 @@
 namespace heyhttp
 {
 
-bool HttpParser::parse(const string& httpString, bool isDebug)
+bool HttpParser::parse(const string& httpString)
 {
     bool ret = true;
     size_t pos1 = httpString.find('\n');
@@ -14,19 +14,19 @@ bool HttpParser::parse(const string& httpString, bool isDebug)
     size_t pos2 = httpString.find("\n\n");
     if(pos2 != string::npos)
     {
-        ret = ret && this->parseHeader(httpString.substr(pos1+1, pos2-pos1), isDebug);
-        ret = ret && this->parseBody(httpString.substr(pos2+2), isDebug);
+        ret = ret && this->parseHeader(httpString.substr(pos1+1, pos2-pos1));
+        ret = ret && this->parseBody(httpString.substr(pos2+2));
     }
     else
     {
-        ret = ret && this->parseHeader(httpString, isDebug);
+        ret = ret && this->parseHeader(httpString);
     }
 
     return ret;
 }
 
 /* Parse HTTP header */
-bool HttpParser::parseHeader(const string& httpString, bool isDebug)
+bool HttpParser::parseHeader(const string& httpString)
 {
     string line;
     size_t pos = 0;
@@ -51,29 +51,14 @@ bool HttpParser::parseHeader(const string& httpString, bool isDebug)
         pos = httpString.find('\n', pos);
     }
 
-
-    /* DEBUG print */
-    if(isDebug)
-    {
-        for(auto& pair : this->_header)
-        {
-            std::cout << std::get<0>(pair) << " : " << std::get<1>(pair) << std::endl;
-        }
-    }
-
     return true;
 }
 
 
 /* Parse HTTP body */
-bool HttpParser::parseBody(const string& httpString, bool isDebug)
+bool HttpParser::parseBody(const string& httpString)
 {
     this->_body = httpString;
-
-    if(isDebug)
-    {
-        std::cout << this->_body << std::endl;
-    }
 
     return true;
 }

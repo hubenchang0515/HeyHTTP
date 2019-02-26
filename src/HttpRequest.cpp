@@ -8,7 +8,7 @@ using std::string;
 using std::map;
 
 /* Parse the HTTP request first line */
-bool HttpRequest::parseFirstLine(const string& httpString, bool isDebug)
+bool HttpRequest::parseFirstLine(const string& httpString)
 {
     size_t pos1 = httpString.find(' ');
     size_t pos2 = httpString.rfind(' ');
@@ -22,13 +22,7 @@ bool HttpRequest::parseFirstLine(const string& httpString, bool isDebug)
         logWarning("Only support HTTP/1.1 (%s).\n", httpString.c_str());
     }
 
-    if(isDebug)
-    {
-        std::cout << this->_method << " " 
-                    << this->_url << " " 
-                    << this->_version 
-                    << std::endl;
-    }
+    return true;
 }
 
 /* Get request method */

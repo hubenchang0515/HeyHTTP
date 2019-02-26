@@ -12,7 +12,7 @@ using std::map;
 class HttpRequest : public HttpParser
 {
 public:
-    virtual bool parseFirstLine(const string& httpRequest, bool isDebug=true);
+    virtual bool parseFirstLine(const string& httpRequest);
 
     virtual string getMethod();
     virtual string getUrl();
